@@ -10,7 +10,7 @@ import path from "path";
 import {fileURLToPath} from "url";
 dotenv.config({path: "./Server/.env"});
 
-
+console.log(process.env.MONGO_DB_KEY)
 const app = express();
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -26,7 +26,6 @@ app.use(cors({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use(limiter);
 
