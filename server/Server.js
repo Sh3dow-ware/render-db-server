@@ -10,7 +10,7 @@ import path from "path";
 import {fileURLToPath} from "url";
 dotenv.config({path: "./Server/.env"});
 
-console.log(process.env.MONGO_DB_KEY)
+
 const app = express();
 const limiter = rateLimit({
     windowMs: 60 * 1000,
@@ -26,6 +26,7 @@ app.use(cors({
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use(limiter);
 
@@ -70,7 +71,11 @@ async function importData() {
 // When Run is called, it will connect to the db.
 async function run() {
     try {
-        await mongoose.connect(uri);
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 50000
+        });
         console.log("Connected to MongoDB");
 
         await importData();
@@ -79,7 +84,7 @@ async function run() {
     }
 }
 
-run();
+run().then(r => console.log(r));
 
 // All GET routes to retrieve relevant data
 app.get("/products", async (req, res) => {
